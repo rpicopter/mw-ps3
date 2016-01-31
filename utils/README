@@ -1,0 +1,22 @@
+When using bluetooth5 you might not need sixad. You will only need sixpair to configure initially your PS3 controller
+
+Using bluetooth5:
+- ensure bluetoothd is started on boot
+- ensure you have got dhcp server configured (for bt network)
+- start blueagent5.py --pin 0000
+- start bridge (for bt network)
+- start bt-pan server pan0 (for bt network)
+
+blueagen5.py: https://www.raspberrypi.org/forums/viewtopic.php?f=29&t=87138&start=75
+bridge:
+	#!/bin/sh
+	brctl addbr pan0 
+	brctl setfd pan0 0
+	brctl stp pan0 off
+	ifconfig pan0 192.168.10.20 netmask 255.255.255.0
+	ifconfig pan0 up
+	udhcpd
+
+
+bt-pan: https://github.com/mk-fg/fgtk/blob/master/bt-pan
+

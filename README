@@ -1,0 +1,3 @@
+If you are using ps3 controller wirelessly you will need to install sixad and sixpair (QtSixA)
+	(note: you might need to add #include <unistd.h> into shared.h to compile sixad on raspbian itself)
+	(note: for sixpair your might need to disable JACK support in Makefile)
