@@ -1,4 +1,12 @@
-When using bluetooth5 you might not need sixad. You will only need sixpair to configure initially your PS3 controller
+mw-ps3.sh is a script that automates pairing of PS3 controller and autostarts mw-ps3 controller.
+It can be called in background on start of your system (i.e. from rc.local).
+
+
+Other programs (not needed for PS3 but useful for bluetooth networking; can be called in background on startup):
+- blueagent5.py
+- bridge
+- bt-pan
+
 
 Using bluetooth5:
 - ensure bluetoothd is started on boot
@@ -7,7 +15,9 @@ Using bluetooth5:
 - start bridge (for bt network)
 - start bt-pan server pan0 (for bt network)
 
+Further details:
 blueagen5.py: https://www.raspberrypi.org/forums/viewtopic.php?f=29&t=87138&start=75
+
 bridge:
 	#!/bin/sh
 	brctl addbr pan0 

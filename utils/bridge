@@ -1,0 +1,8 @@
+#!/bin/sh
+
+brctl addbr pan0 
+brctl setfd pan0 0
+brctl stp pan0 off
+ifconfig pan0 192.168.10.20 netmask 255.255.255.0
+ifconfig pan0 up
+udhcpd

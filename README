@@ -1,3 +1,21 @@
 If you are using ps3 controller wirelessly you will need to install sixad and sixpair (QtSixA)
+	(note: sixad might not be needed in the newer kernel versions as it has built in PS3 support)
 	(note: you might need to add #include <unistd.h> into shared.h to compile sixad on raspbian itself)
 	(note: for sixpair your might need to disable JACK support in Makefile)
+
+Compile:
+- ./autogen.sh
+- make
+- sudo make install
+- Opionally copy utils/mw-ps3.sh to your system and call it every boot in the background (i.e. in rc.local). See utils/README for more details
+
+Run:
+- utils/mw-ps3.sh should take care of everything (pairing and starting)
+- otherwise just run ./mw-ps3 once your PS3 is connected
+
+
+Usage:
+- left stick - throttle/yaw (throttle behaves incrementally)
+- right stick - roll/pitch
+- button o - toggle BOXHORIZON
+- button x - toggle BOXBARO

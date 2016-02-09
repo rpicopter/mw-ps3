@@ -8,10 +8,11 @@ struct s_rec {
     int fd;
 };
 
-int rec_open(const char *path, struct s_rec *s);
-int rec_config(struct s_rec *s, int *t, int *v);
-int rec_update(struct s_rec *s);
-int rec_close(struct s_rec *s);
+int constrain(int x, int min, int max);
+int8_t rec_open(const char *path, struct s_rec *s);
+int8_t rec_config(struct s_rec *s, int *t, int *v);
+int8_t rec_update(struct s_rec *s);
+int8_t rec_close(struct s_rec *s);
 
 #endif
 

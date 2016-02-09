@@ -18,7 +18,11 @@ static int map(int x, int in_min, int in_max, int out_min, int out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-int rec_open(const char *path, struct s_rec *s) {
+int constrain(int x, int min, int max) {
+	return x<min?min:(x>max?max:x);
+}
+
+int8_t rec_open(const char *path, struct s_rec *s) {
 	s->aux = -1;
 	s->fd = open (path, O_RDONLY | O_NONBLOCK);	
 	if (s->fd < 0) {
@@ -29,7 +33,7 @@ int rec_open(const char *path, struct s_rec *s) {
 	return 0;
 }
 
-int process_jsevent(struct s_rec *s, struct js_event *e) {
+int8_t process_jsevent(struct s_rec *s, struct js_event *e) {
 	if ((e->type & JS_EVENT_INIT)==JS_EVENT_INIT) {
 		//printf("JS buffer full?\n");	
 		return 0;
@@ -44,7 +48,8 @@ int process_jsevent(struct s_rec *s, struct js_event *e) {
 		//printf("A %2u VAL: %4i\n",e->number,e->value);
 		switch(e->number) {
 			case 0: s->yprt[0] = map(e->value,-32767,32767,1000, 2000); nc=1; break;
-			case 1: s->yprt[3] = map(e->value,-32767,32767,2500, 650)-575; nc=1; break;
+			//case 1: s->yprt[3] = map(e->value,-32767,32767,2500, 650)-575; nc=1; break;
+			case 1: s->yprt[3] = map(e->value,-32767,32767,1000, -1000); nc=1; break;
 			case 2: s->yprt[2] = map(e->value,-32767,32767,1000, 2000); nc=1; break;
 			case 3: s->yprt[1] = map(e->value,-32767,32767,2000, 1000); nc=1; break;
 		}
@@ -52,7 +57,7 @@ int process_jsevent(struct s_rec *s, struct js_event *e) {
 	return 0;	
 }
 
-int rec_update(struct s_rec *s) {
+int8_t rec_update(struct s_rec *s) {
 	ret = read (s->fd, js_e, sizeof(js_e));
 	if (ret<0 && errno != EAGAIN) {
 		printf("Error reading js: [%i] [%s]\n",errno,strerror(errno));
@@ -68,7 +73,7 @@ int rec_update(struct s_rec *s) {
 	return 0;
 }
 
-int rec_close(struct s_rec *s) {
+int8_t rec_close(struct s_rec *s) {
 	if (s->fd) {
 		close(s->fd);
 	}
