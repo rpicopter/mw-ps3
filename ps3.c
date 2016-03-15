@@ -22,8 +22,6 @@
 #include <mw/shm.h>
 #include <mw/msg.h>
 
-
-#define TIMEOUT_MS 1000
 int verbose; 
 
 struct s_rec js;
@@ -32,14 +30,8 @@ int ret;
 int err = 0;
 int stop = 0;
 
-int trim[3] = {0,0,0};//in degrees * 1000
-int mode = 0;
-
 struct S_MSP_BOXCONFIG boxconf;
 struct S_MSG msg;
-
-#define FILTER_LEN 2
-uint8_t filter[FILTER_LEN] = {113,119};
 
 void catch_signal(int sig)
 {
@@ -57,46 +49,11 @@ void mssleep(unsigned int ms) {
    }
 }
 
-long TimeSpecMS(struct timespec *dt) {
-        return dt->tv_sec*1000 + dt->tv_nsec/1000000;
-}
-
-struct timespec *TimeSpecDiff(struct timespec *ts1, struct timespec *ts2) //difference between ts1 and ts2
-{
-        static struct timespec ts;
-        ts.tv_sec = ts1->tv_sec - ts2->tv_sec;
-        ts.tv_nsec = ts1->tv_nsec - ts2->tv_nsec;
-        if (ts.tv_nsec < 0) { //wrap around
-                ts.tv_sec--;
-                ts.tv_nsec += 1000000000;
-        }
-        return &ts;
-}
-
-//-1 - error
-// 0 - no update but read ok
-// 1 - update
 uint8_t checkUpdate(int8_t valid) {
-	/*
-	static struct timespec prev;
-	static uint8_t initiated = 0;
-	struct timespec cur;
-
-	if (!initiated) {
-		clock_gettime(CLOCK_REALTIME, &prev);
-		initiated = 1;
-	}
-
-
-	clock_gettime(CLOCK_REALTIME, &cur);
-
-	if (TimeSpecMS(TimeSpecDiff(&cur,&prev))>TIMEOUT_MS) 
-		return 0;
-
-	if (valid) prev = cur; //we got valid update to reset timer
-
-	return 0;
-	*/
+	// valid argument values:
+	// -1 - error
+	// 0 - no update but read ok
+	// 1 - update
 
 	if (valid < 0) {
 		printf("Receiver reading error: [%s]\n",strerror(ret));
@@ -139,6 +96,9 @@ void do_adjustments(struct s_rec *js) {
 
 
 void processIncoming() {
+	#define FILTER_LEN 2
+	static uint8_t filter[FILTER_LEN] = {113,119}; //shm_scan normally scans all IDs. But we are only interested in the provided ones;
+
 	struct S_MSG m;
 	uint8_t ret;
 	ret=shm_scan_incoming_f(&m,filter,FILTER_LEN);
@@ -169,7 +129,7 @@ void loop() {
 	rc.roll = rc.pitch = rc.yaw = rc.throttle = 1500;
 	while (!stop) {
 		if ((counter%50)==0) { //everysec refresh active boxes
-			msp_BOX(&msg);
+			msp_BOX(&msg); //get status for each box 
 			shm_put_outgoing(&msg);
 		}
 
@@ -198,7 +158,6 @@ void loop() {
 			baro_initiated = 0;
 			rc.throttle += js.yprt[3]/100;	//make is 1/25 sensitive
 			rc.throttle = constrain(rc.throttle,950,2000);
-			//rc.throttle = constrain(js.yprt[3]+950,950,2000);
 		}
 		rc.aux1=rc.aux2=rc.aux3=rc.aux4=1500;
 
