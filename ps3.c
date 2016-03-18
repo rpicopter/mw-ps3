@@ -70,10 +70,18 @@ void do_adjustments(struct s_rec *js) {
 	if (js->aux<0) return;
 
 	switch (js->aux) {
+		case 12: //??
+			if (boxconf.supported[BOXLAND]) {
+				boxconf.active[BOXLAND] = toggleBox(boxconf.active[BOXLAND]);
+				mspmsg_SET_BOX_create(&msg,&boxconf);
+				shm_put_outgoing(&msg);
+				if (verbose) printf("BOXLAND: %u\n",boxconf.active[BOXLAND]);
+			}
+			break;
 		case 13: //o - horion mode
 			if (boxconf.supported[BOXHORIZON]) {
 				boxconf.active[BOXHORIZON] = toggleBox(boxconf.active[BOXHORIZON]);
-				msp_SET_BOX(&msg,&boxconf);
+				mspmsg_SET_BOX_create(&msg,&boxconf);
 				shm_put_outgoing(&msg);
 				if (verbose) printf("HORIZON: %u\n",boxconf.active[BOXHORIZON]);
 			}
@@ -81,9 +89,17 @@ void do_adjustments(struct s_rec *js) {
 		case 14: //x - baro mode
 			if (boxconf.supported[BOXBARO]) {
 				boxconf.active[BOXBARO] = toggleBox(boxconf.active[BOXBARO]);
-				msp_SET_BOX(&msg,&boxconf);
+				mspmsg_SET_BOX_create(&msg,&boxconf);
 				shm_put_outgoing(&msg);
 				if (verbose) printf("BARO: %u\n",boxconf.active[BOXBARO]);
+			}
+			break;
+		case 16: //select
+			if (boxconf.supported[BOXGPSHOLD]) {
+				boxconf.active[BOXGPSHOLD] = toggleBox(boxconf.active[BOXGPSHOLD]);
+				mspmsg_SET_BOX_create(&msg,&boxconf);
+				shm_put_outgoing(&msg);
+				if (verbose) printf("BOXGPSHOLD: %u\n",boxconf.active[BOXGPSHOLD]);
 			}
 			break;
 		default:
@@ -105,10 +121,10 @@ void processIncoming() {
 	while (ret) {
 		switch(m.message_id) {
 			case 113:
-				msp_parse_BOX(&boxconf,&m);
+				mspmsg_BOX_parse(&boxconf,&m);
 				break;
 			case 119:
-				msp_parse_BOXIDS(&boxconf,&m);
+				mspmsg_BOXIDS_parse(&boxconf,&m);
 				break;
 		}
 		ret=shm_scan_incoming_f(&m,filter,FILTER_LEN);
@@ -121,7 +137,7 @@ void loop() {
 	uint8_t baro_initiated = 0; //timeout for ps3 stick get back to position 0 after baro initialized                                
 	struct S_MSP_RC rc;
 
-	msp_BOXIDS(&msg); //get supported boxes
+	mspmsg_BOXIDS_create(&msg); //get supported boxes
 	shm_put_outgoing(&msg);
 
 	if (verbose) printf("Starting main loop...\n");
@@ -129,7 +145,7 @@ void loop() {
 	rc.roll = rc.pitch = rc.yaw = rc.throttle = 1500;
 	while (!stop) {
 		if ((counter%50)==0) { //everysec refresh active boxes
-			msp_BOX(&msg); //get status for each box 
+			mspmsg_BOX_create(&msg); //get status for each box 
 			shm_put_outgoing(&msg);
 		}
 
@@ -162,7 +178,7 @@ void loop() {
 		rc.aux1=rc.aux2=rc.aux3=rc.aux4=1500;
 
 		//if (verbose) printf("%u %u %u %u\n",rc.roll,rc.pitch,rc.yaw,rc.throttle);
-		msp_SET_RAW_RC(&msg,&rc);
+		mspmsg_SET_RAW_RC_create(&msg,&rc);
 		shm_put_outgoing(&msg);
 
 		counter++;
