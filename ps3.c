@@ -73,7 +73,7 @@ void do_adjustments(struct s_rec *js) {
 		case 12: //??
 			if (boxconf.supported[BOXLAND]) {
 				boxconf.active[BOXLAND] = toggleBox(boxconf.active[BOXLAND]);
-				mspmsg_SET_BOX_create(&msg,&boxconf);
+				mspmsg_SET_BOX_serialize(&msg,&boxconf);
 				shm_put_outgoing(&msg);
 				if (verbose) printf("BOXLAND: %u\n",boxconf.active[BOXLAND]);
 			}
@@ -81,7 +81,7 @@ void do_adjustments(struct s_rec *js) {
 		case 13: //o - horion mode
 			if (boxconf.supported[BOXHORIZON]) {
 				boxconf.active[BOXHORIZON] = toggleBox(boxconf.active[BOXHORIZON]);
-				mspmsg_SET_BOX_create(&msg,&boxconf);
+				mspmsg_SET_BOX_serialize(&msg,&boxconf);
 				shm_put_outgoing(&msg);
 				if (verbose) printf("HORIZON: %u\n",boxconf.active[BOXHORIZON]);
 			}
@@ -89,7 +89,7 @@ void do_adjustments(struct s_rec *js) {
 		case 14: //x - baro mode
 			if (boxconf.supported[BOXBARO]) {
 				boxconf.active[BOXBARO] = toggleBox(boxconf.active[BOXBARO]);
-				mspmsg_SET_BOX_create(&msg,&boxconf);
+				mspmsg_SET_BOX_serialize(&msg,&boxconf);
 				shm_put_outgoing(&msg);
 				if (verbose) printf("BARO: %u\n",boxconf.active[BOXBARO]);
 			}
@@ -97,7 +97,7 @@ void do_adjustments(struct s_rec *js) {
 		case 16: //select
 			if (boxconf.supported[BOXGPSHOLD]) {
 				boxconf.active[BOXGPSHOLD] = toggleBox(boxconf.active[BOXGPSHOLD]);
-				mspmsg_SET_BOX_create(&msg,&boxconf);
+				mspmsg_SET_BOX_serialize(&msg,&boxconf);
 				shm_put_outgoing(&msg);
 				if (verbose) printf("BOXGPSHOLD: %u\n",boxconf.active[BOXGPSHOLD]);
 			}
@@ -137,7 +137,7 @@ void loop() {
 	uint8_t baro_initiated = 0; //timeout for ps3 stick get back to position 0 after baro initialized                                
 	struct S_MSP_RC rc;
 
-	mspmsg_BOXIDS_create(&msg); //get supported boxes
+	mspmsg_BOXIDS_serialize(&msg,NULL); //get supported boxes
 	shm_put_outgoing(&msg);
 
 	if (verbose) printf("Starting main loop...\n");
@@ -145,7 +145,7 @@ void loop() {
 	rc.roll = rc.pitch = rc.yaw = rc.throttle = 1500;
 	while (!stop) {
 		if ((counter%50)==0) { //everysec refresh active boxes
-			mspmsg_BOX_create(&msg); //get status for each box 
+			mspmsg_BOX_serialize(&msg,NULL); //get status for each box 
 			shm_put_outgoing(&msg);
 		}
 
@@ -178,7 +178,7 @@ void loop() {
 		rc.aux1=rc.aux2=rc.aux3=rc.aux4=1500;
 
 		//if (verbose) printf("%u %u %u %u\n",rc.roll,rc.pitch,rc.yaw,rc.throttle);
-		mspmsg_SET_RAW_RC_create(&msg,&rc);
+		mspmsg_SET_RAW_RC_serialize(&msg,&rc);
 		shm_put_outgoing(&msg);
 
 		counter++;
