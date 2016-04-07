@@ -70,7 +70,7 @@ void do_adjustments(struct s_rec *js) {
 	if (js->aux<0) return;
 
 	switch (js->aux) {
-		case 12: //??
+		case 15: //square land/
 			if (boxconf.supported[BOXLAND]) {
 				boxconf.active[BOXLAND] = toggleBox(boxconf.active[BOXLAND]);
 				mspmsg_SET_BOX_serialize(&msg,&boxconf);
@@ -78,7 +78,7 @@ void do_adjustments(struct s_rec *js) {
 				if (verbose) printf("BOXLAND: %u\n",boxconf.active[BOXLAND]);
 			}
 			break;
-		case 13: //o - horion mode
+		case 12: //x - horion mode
 			if (boxconf.supported[BOXHORIZON]) {
 				boxconf.active[BOXHORIZON] = toggleBox(boxconf.active[BOXHORIZON]);
 				mspmsg_SET_BOX_serialize(&msg,&boxconf);
@@ -94,7 +94,7 @@ void do_adjustments(struct s_rec *js) {
 				if (verbose) printf("BARO: %u\n",boxconf.active[BOXBARO]);
 			}
 			break;
-		case 16: //select
+		case 13: //o
 			if (boxconf.supported[BOXGPSHOLD]) {
 				boxconf.active[BOXGPSHOLD] = toggleBox(boxconf.active[BOXGPSHOLD]);
 				mspmsg_SET_BOX_serialize(&msg,&boxconf);
