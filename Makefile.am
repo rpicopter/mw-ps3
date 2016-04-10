@@ -4,6 +4,9 @@ mw_ps3_CFLAGS = -Wall
 mw_ps3_LDFLAGS = 
 mw_ps3_LDADD = -lmw_core -lrt -lpthread -lssl -lcrypto -lresolv
 
+mw_ps3bindir=$(bindir)
+mw_ps3bin_SCRIPTS = utils/mw-ps3.sh
+
 mwconfdir=$(sysconfdir)/mw
 
 install-exec-hook:
