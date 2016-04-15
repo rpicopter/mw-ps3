@@ -22,9 +22,10 @@ Installation
 
 Running & Testing
 ==============
+- if using mw-config this will be started automatically
+Otherwise:
 - for wireless operation run utils/mw-ps3.sh which should take care of everything (pairing and starting)
 - otherwise just run ./mw-ps3 once your PS3 is connected
-- you can also use mw-config to autostart this service
 
 
 Usage:
