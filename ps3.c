@@ -72,34 +72,34 @@ void do_adjustments(struct s_rec *js) {
 	switch (js->aux) {
 		case 15: //square land/
 			if (boxconf.supported[BOXLAND]) {
-				boxconf.active[BOXLAND] = toggleBox(boxconf.active[BOXLAND]);
+				boxconf.value[BOXLAND] = toggleBox(boxconf.value[BOXLAND]);
 				mspmsg_SET_BOX_serialize(&msg,&boxconf);
 				shm_put_outgoing(&msg);
-				if (verbose) printf("BOXLAND: %u\n",boxconf.active[BOXLAND]);
+				if (verbose) printf("BOXLAND: %u\n",boxconf.value[BOXLAND]);
 			}
 			break;
 		case 12: //x - horion mode
 			if (boxconf.supported[BOXHORIZON]) {
-				boxconf.active[BOXHORIZON] = toggleBox(boxconf.active[BOXHORIZON]);
+				boxconf.value[BOXHORIZON] = toggleBox(boxconf.value[BOXHORIZON]);
 				mspmsg_SET_BOX_serialize(&msg,&boxconf);
 				shm_put_outgoing(&msg);
-				if (verbose) printf("HORIZON: %u\n",boxconf.active[BOXHORIZON]);
+				if (verbose) printf("HORIZON: %u\n",boxconf.value[BOXHORIZON]);
 			}
 			break;		
 		case 14: //x - baro mode
 			if (boxconf.supported[BOXBARO]) {
-				boxconf.active[BOXBARO] = toggleBox(boxconf.active[BOXBARO]);
+				boxconf.value[BOXBARO] = toggleBox(boxconf.value[BOXBARO]);
 				mspmsg_SET_BOX_serialize(&msg,&boxconf);
 				shm_put_outgoing(&msg);
-				if (verbose) printf("BARO: %u\n",boxconf.active[BOXBARO]);
+				if (verbose) printf("BARO: %u\n",boxconf.value[BOXBARO]);
 			}
 			break;
 		case 13: //o
 			if (boxconf.supported[BOXGPSHOLD]) {
-				boxconf.active[BOXGPSHOLD] = toggleBox(boxconf.active[BOXGPSHOLD]);
+				boxconf.value[BOXGPSHOLD] = toggleBox(boxconf.value[BOXGPSHOLD]);
 				mspmsg_SET_BOX_serialize(&msg,&boxconf);
 				shm_put_outgoing(&msg);
-				if (verbose) printf("BOXGPSHOLD: %u\n",boxconf.active[BOXGPSHOLD]);
+				if (verbose) printf("BOXGPSHOLD: %u\n",boxconf.value[BOXGPSHOLD]);
 			}
 			break;
 		default:
@@ -164,7 +164,7 @@ void loop() {
 		rc.roll = constrain(js.yprt[2],1000,2000);
 		rc.pitch = constrain(js.yprt[1],1000,2000);
 		rc.yaw = constrain(js.yprt[0],1000,2000);
-		if (boxconf.active[BOXBARO]) {
+		if (boxconf.value[BOXBARO]) {
 			if (baro_initiated>50) { //1 seconds to get throttle stick back to 0
 				rc.throttle += js.yprt[3]/50;	//make is 1/25 sensitive
 				rc.throttle = constrain(rc.throttle,950,2000);
