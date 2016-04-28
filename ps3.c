@@ -137,7 +137,7 @@ void loop() {
 	uint8_t baro_initiated = 0; //timeout for ps3 stick get back to position 0 after baro initialized                                
 	struct S_MSP_RC rc;
 
-	mspmsg_BOXIDS_serialize(&msg,NULL); //get supported boxes
+	mspmsg_BOXIDS_serialize(&msg); //get supported boxes
 	shm_put_outgoing(&msg);
 
 	if (verbose) printf("Starting main loop...\n");
@@ -145,7 +145,7 @@ void loop() {
 	rc.roll = rc.pitch = rc.yaw = rc.throttle = 1500;
 	while (!stop) {
 		if ((counter%50)==0) { //everysec refresh active boxes
-			mspmsg_BOX_serialize(&msg,NULL); //get status for each box 
+			mspmsg_BOX_serialize(&msg); //get status for each box 
 			shm_put_outgoing(&msg);
 		}
 
